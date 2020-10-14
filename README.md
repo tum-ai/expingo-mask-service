@@ -1,5 +1,7 @@
 # Mask RCNN as a service
 Mask Service for Image segmentation wrapped into [fastapi](https://fastapi.tiangolo.com/).  
+The model is taken from this [github project](https://github.com/matterport/Mask_RCNN).  
+Check it out to see what the model can do.
 
 ## Usage
 
@@ -11,22 +13,19 @@ The container image can be build using the provided [docker file](Dockerfile).
 docker build -t expingo-mask-service .
 ```
 
-If you build the docker container without the weight the first time, they will be downloaded 
-once the container is executed but it takes some time.  
-You can start the container with interactive mode
+The build takes a while. Once finished, run
 ```
-docker run --rm -it expingo-mask-service
+docker run -p 8000:8000 expingo-mask-service
 ```
-and run the app script in the container
+You can inspect and play with the API in swagger
 ```
-python3.7 main.py
+http://localhost:8000/docs
 ```
-Then copy the file out of the container (run this on your host system)
-```bash
-docker cp {container_id}:/app/mask_rcnn_coco.h5 .
+
+## Developer Guide
+To create a usable development setting I recommend using the docker container and mounting the 
+project into the container. 
 ```
-You can find the container id with
+docker run --rm -it -v /path/to/project/on/your/host:/dev -p 8000:8000 expingo-mask-service bash
 ```
-docker ps
-```
-Then rebuild the container while placing the file in the project root directory.
+Using swagger as describe above give an easy way to tease the api with some requests.
