@@ -42,13 +42,9 @@ RUN python3.7 -m pip --no-cache-dir install jupyter && \
          "\nc.NotebookApp.open_browser = False" \
          "\nc.NotebookApp.token = ''" \
          > /root/.jupyter/jupyter_notebook_config.py
-EXPOSE 8888
 
 # TensorFlow 1.13.1 - CPU
 RUN python3.7 -m pip install --no-cache-dir --upgrade tensorflow==1.13.1
-
-# Expose port for TensorBoard
-EXPOSE 6006
 
 #
 # OpenCV 3.4.1
@@ -106,6 +102,8 @@ RUN apt-get install -y libgl1-mesa-glx
 COPY . /app
 WORKDIR /app
 RUN python3.7 -m pip install -r requirements.txt
+
+EXPOSE 8000
 
 WORKDIR /app/app
 CMD ["python3.7", "main.py"]
