@@ -103,7 +103,8 @@ COPY . /app
 WORKDIR /app
 RUN python3.7 -m pip install -r requirements.txt
 
-EXPOSE 8000
+EXPOSE 8080
+ENV PORT=8080
 
 WORKDIR /app/app
 CMD ["python3.7", "main.py"]
