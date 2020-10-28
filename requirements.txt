@@ -2,3 +2,11 @@ fastapi
 aiofiles
 uvicorn
 python-multipart
+numpy
+opencv-python
+pillow
+mrcnn
+tensorflow==1.13.1
+scipy
+scikit-image
+keras==2.2.4

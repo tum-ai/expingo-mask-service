@@ -30,7 +30,7 @@ RUN apt-get install -y --no-install-recommends libjpeg-dev zlib1g-dev && \
 
 # Science libraries and other common packages
 RUN python3.7 -m pip --no-cache-dir install \
-    numpy scipy scikit-image matplotlib Cython imgaug
+    numpy scipy scikit-image matplotlib Cython imgaug python-multipart
 
 # Jupyter Notebook
 #
