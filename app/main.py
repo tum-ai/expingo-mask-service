@@ -2,7 +2,7 @@ import os
 import numpy as np
 import uvicorn
 
-from fastapi import FastAPI, UploadFile, File, Query
+from fastapi import FastAPI, UploadFile, File, Query, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import cv2
@@ -100,12 +100,10 @@ async def create_upload_file(classes: List[str] = Query(None), file: UploadFile 
     image = cv2.imdecode(np.fromstring(content, np.uint8), cv2.IMREAD_COLOR)
     valid_classes = drop_invalid_classes(classes)
     if len(valid_classes) == 0:
-        pass  # TODO: Handle that shit
+        raise HTTPException(status_code=400, detail="You must choose at least one valid class for masking.")
 
     result = model.detect([image], verbose=1)[0]
     class_ids = result['class_ids']
-    if len(class_ids):
-        pass  # TODO: Handle that shit
 
     masks = result['masks']
     detected_classes = [class_names[idx] for idx in class_ids]
