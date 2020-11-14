@@ -9,6 +9,7 @@ import cv2
 from pydantic import BaseModel
 from typing import List, Tuple
 from PIL import Image
+import base64
 
 from mrcnn import utils
 import mrcnn.model as modellib
@@ -117,8 +118,13 @@ async def create_upload_file(classes: List[str] = Query(None), file: UploadFile 
     for i in range(len(relevant_masks)):
         save_image(relevant_masks[i], name=f"mask_{i}.png")
 
+    images = []
+    for i in range(len(relevant_masks)):
+        with open(f"mask_{i}.png", "rb") as image_file:
+            images.append("data:image/png;base64,{}".format(base64.b64encode(image_file.read()).decode()))
+
     return {
-        "masks": [FileResponse(f"mask_{i}.png") for i in range(len(relevant_masks))],
+        "masks": [images[i] for i in range(len(images))],
         "classes": relevant_classes
     }
 
@@ -132,7 +138,7 @@ def drop_invalid_classes(classes: List[str]) -> List[str]:
 
 def save_image(image_arr: np.array, name: str):
     im = Image.fromarray(image_arr)
-    im.save(f"{name}.png")
+    im.save(f"{name}")
 
 
 def filter_selected_classes(
@@ -141,10 +147,11 @@ def filter_selected_classes(
         masks: np.array) -> Tuple[List[str], List[np.array]]:
     final_classes = []
     final_masks = []
+    print(masks.shape)
     for i, c in enumerate(detected_classes):
         if c in selected_classes:
             final_classes.append(c)
-            final_masks.append(masks[i])
+            final_masks.append(masks[:, :, i])
     return final_classes, final_masks
 
 
