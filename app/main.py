@@ -14,6 +14,7 @@ import base64
 from mrcnn import utils
 import mrcnn.model as modellib
 from mrcnn.config import Config
+from scipy import ndimage
 
 
 ROOT_DIR = os.path.abspath(".")
@@ -137,8 +138,15 @@ def drop_invalid_classes(classes: List[str]) -> List[str]:
 
 
 def save_image(image_arr: np.array, name: str):
-    im = Image.fromarray(image_arr)
-    im.save(f"{name}")
+    # Improve mask corners
+    image_arr = ndimage.binary_dilation(image_arr, iterations=3)
+    # Convert boolean mask to a transparent mask
+    arr = image_arr.astype(np.uint8) * 255
+    arr = np.stack((arr, arr, arr, np.zeros(arr.shape) + 255), axis=2)
+    mBlack = (arr[:, :, 0:3] == [0, 0, 0]).all(2)
+    arr[mBlack] = (0, 0, 0, 0)
+    arr = arr.astype('uint8')
+    im = Image.fromarray(arr).save(f"{name}")
 
 
 def filter_selected_classes(
